@@ -70,6 +70,6 @@ public void receive() {
 		try {
 			socket.close();
 		} catch (Exception e) {
-		}
+		} 
 	}
 }
