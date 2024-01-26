@@ -14,6 +14,11 @@ public class BoardExample9{
 	public BoardExample9() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
+//			System.out.println("-------------------------------");
+//			System.out.println("          로그인 페이지        ");
+//			System.out.println("-------------------------------");
+			
+
 			
 			conn = DriverManager.getConnection(
 					"jdbc:mysql://192.168.111.200:3306/thisisjava",
@@ -21,12 +26,53 @@ public class BoardExample9{
 					"mysql"
 					);
 		}catch(Exception e) {
+			// System.out.println("로그인이 실패하였습니다.");
 			e.printStackTrace();
 			exit();
 		}
 	}
 	
+	public boolean login() {
+	      System.out.println("-------------------------------");
+	      System.out.println("          로그인 페이지        ");
+	      System.out.println("-------------------------------");
+
+	      System.out.print("아이디: ");
+	      String id = scanner.nextLine();
+	      
+	      System.out.print("비밀번호: ");
+	      String password = scanner.nextLine();
+	      String sql = "SELECT * FROM users WHERE userid = ?";
+	       
+	      try {
+	         PreparedStatement pstmt = conn.prepareStatement(sql);
+	         pstmt.setString(1, id);
+	         ResultSet rs = pstmt.executeQuery();
+	         
+	         if (rs.next()) {
+	                 String tmpPW = rs.getString("userpassword");
+	                 String tmpNAME = rs.getString("username");
+
+	                 if (tmpPW.equals(password)) {
+	                     rs.close();
+	                     pstmt.close();
+	                     System.out.println(tmpNAME+"님 환영합니다.");
+	                     return true;
+	               }
+	         }
+	         
+	         rs.close();
+	         pstmt.close(); 
+	      }catch(Exception e) {
+	         e.printStackTrace();
+	         exit();
+	      }
+	      return false;
+	   }
+
+	
 	public void list() {
+//		System.out.println("로그인 하였습니다.");
 		System.out.println();
 		System.out.println("[게시물 목록]");
 		System.out.println("-------------------------------------------------------------------------");
@@ -239,8 +285,13 @@ public class BoardExample9{
 		}
 		list();
 	}
+	
 	public static void main(String[] args) {
 		BoardExample9 boardExample = new BoardExample9();
-		boardExample.list();
+		if(boardExample.login()) {
+			boardExample.list();
+		}
+		System.out.println("로그인 실패!");
+		
 	}
 }
